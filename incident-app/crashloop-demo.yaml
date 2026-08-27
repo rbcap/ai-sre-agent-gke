@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-demo
+  namespace: ai-sre
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crashloop-demo
+  template:
+    metadata:
+      labels:
+        app: crashloop-demo
+    spec:
+      containers:
+        - name: crashloop-demo
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Application starting..."
+              echo "DATABASE_URL is missing"
+              exit 1

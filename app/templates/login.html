@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI SRE Agent - Login</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+    <script
+        src="https://accounts.google.com/gsi/client"
+        async
+        defer
+    ></script>
+</head>
+
+<body class="login-body">
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <div class="login-logo">
+            🤖
+        </div>
+
+        <h1>AI SRE Agent</h1>
+
+        <p class="login-subtitle">
+            Secure Kubernetes Incident Investigation Portal
+        </p>
+
+
+        {% if not google_client_id %}
+
+        <div class="login-error">
+            Google authentication is not configured.
+            GOOGLE_CLIENT_ID is missing.
+        </div>
+
+        {% else %}
+
+        <!-- Google Identity Services Configuration -->
+
+        <div
+            id="g_id_onload"
+            data-client_id="{{ google_client_id }}"
+            data-callback="handleGoogleLogin"
+            data-auto_prompt="false"
+        ></div>
+
+
+        <!-- Google Sign-In Button -->
+
+        <div class="google-login-container">
+
+            <div
+                class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signin_with"
+                data-size="large"
+                data-logo_alignment="left"
+                data-width="320"
+            ></div>
+
+        </div>
+
+        {% endif %}
+
+
+        <div
+            id="loginError"
+            class="login-error"
+            style="display:none;"
+        >
+            Unable to sign in with Google.
+        </div>
+
+
+        <div
+            id="loginStatus"
+            class="login-status"
+            style="display:none;"
+        >
+            Signing in...
+        </div>
+
+
+        <p class="login-footer">
+            🔐 Protected AI SRE Platform
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function handleGoogleLogin(response) {
+
+    const errorElement =
+        document.getElementById("loginError");
+
+    const statusElement =
+        document.getElementById("loginStatus");
+
+
+    errorElement.style.display = "none";
+
+    statusElement.style.display = "block";
+
+    statusElement.textContent =
+        "🔄 Verifying your Google accoq!unt...";
+
+
+    try {
+
+        const result = await fetch(
+            "/auth/google",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    credential:
+                        response.credential
+                })
+            }
+        );
+
+
+        const data =
+            await result.json();
+
+
+        if (!result.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Google authentication failed"
+            );
+
+        }
+
+
+        statusElement.textContent =
+            "✅ Authentication successful. Redirecting...";
+
+
+        window.location.href = "/";
+
+
+    } catch (error) {
+
+        console.error(
+            "Google authentication error:",
+            error
+        );
+
+
+        statusElement.style.display =
+            "none";
+
+
+        errorElement.style.display =
+            "block";
+
+
+        errorElement.textContent =
+            error.message;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

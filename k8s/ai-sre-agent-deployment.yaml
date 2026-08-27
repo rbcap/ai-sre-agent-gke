@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-sre-agent
+  namespace: ai-sre
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: ai-sre-agent
+
+  template:
+    metadata:
+      labels:
+        app: ai-sre-agent
+
+    spec:
+      serviceAccountName: ai-sre-agent
+
+      containers:
+        - name: ai-sre-agent
+
+          image: <REGION>-docker.pkg.dev/<PROJECT_ID>/<REPOSITORY>/ai-sre-agent:v1
+
+          imagePullPolicy: Always
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          env:
+            # ==================================================
+            # GOOGLE AUTH
+            # ==================================================
+
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ai-sre-auth
+                  key: google-client-id
+
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ai-sre-auth
+                  key: session-secret
+
+            # HTTP LoadBalancer for now.
+            # Change to "true" after HTTPS is enabled.
+            - name: COOKIE_SECURE
+              value: "false"
+
+            # ==================================================
+            # PROMETHEUS
+            # ==================================================
+
+            - name: PROMETHEUS_URL
+              value: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+
+            # ==================================================
+            # GRAFANA
+            # ==================================================
+
+            - name: GRAFANA_URL
+              value: "http://35.229.75.71"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

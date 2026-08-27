@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI SRE Agent</title>
+    <link rel="stylesheet" href="/static/style.css?v=final6">
+</head>
+
+<body>
+<div class="app-shell">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <!-- Brand -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                🤖
+            </div>
+
+            <div class="sidebar-brand-text">
+                <h2>AI SRE Agent</h2>
+                <p>Kubernetes Intelligence</p>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-divider"></div>
+
+
+        <!-- Navigation -->
+
+        <nav class="sidebar-nav">
+
+            <button
+                class="nav-item active"
+                data-section="overview"
+                type="button"
+            >
+                <span class="nav-icon">🏠</span>
+                <span>Overview</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="monitoring"
+                type="button"
+            >
+                <span class="nav-icon">📈</span>
+                <span>Monitoring</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="investigate"
+                type="button"
+            >
+                <span class="nav-icon">🔍</span>
+                <span>Investigate</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="results"
+                type="button"
+            >
+                <span class="nav-icon">📋</span>
+                <span>Results</span>
+            </button>
+
+        </nav>
+
+
+        <!-- =================================================
+             LOGGED-IN GOOGLE USER
+        ================================================== -->
+
+        <div class="sidebar-user">
+
+            <div class="user-profile">
+
+                {% if user.picture %}
+
+                <img
+                    src="{{ user.picture }}"
+                    alt="{{ user.name }}"
+                    class="user-avatar"
+                    referrerpolicy="no-referrer"
+                >
+
+                {% else %}
+
+                <div class="user-avatar-fallback">
+                    👤
+                </div>
+
+                {% endif %}
+
+
+                <div class="user-info">
+
+                    <div
+                        class="user-name"
+                        title="{{ user.name }}"
+                    >
+                        {{ user.name }}
+                    </div>
+
+                    <div
+                        class="user-email"
+                        title="{{ user.email }}"
+                    >
+                        {{ user.email }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="logoutButton"
+                type="button"
+                class="signout-btn"
+            >
+                <span>↪</span>
+                <span>Sign out</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+        <!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+        <section
+            id="section-overview"
+            class="page-section active"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        AI-POWERED SRE PLATFORM
+                    </div>
+
+                    <h1>Overview</h1>
+
+                </div>
+
+
+                <div class="page-actions">
+
+                    <span class="live-badge">
+                        <span class="live-dot"></span>
+                        Live
+                    </span>
+
+                    <button
+                        id="refreshAllButton"
+                        type="button"
+                        class="secondary-btn"
+                    >
+                        🔄 Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Hero -->
+
+            <div class="hero-card">
+
+                <div class="hero-content">
+
+                    <div class="eyebrow">
+                        ✨ AI-POWERED SRE PLATFORM
+                    </div>
+
+                    <h2>
+                        Investigate incidents.
+                        Find root causes faster.
+                    </h2>
+
+                    <p>
+                        Connect your Kubernetes environment and let the
+                        AI SRE Agent collect evidence, analyze failures,
+                        identify root causes, and recommend remediation steps.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="startInvestigationButton"
+                    type="button"
+                    class="primary-btn hero-button"
+                >
+                    🔍 Start Investigation
+                </button>
+
+            </div>
+
+
+            <!-- Platform Health -->
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Platform Health</h2>
+                    <p>
+                        Live connectivity status of your AI SRE platform
+                    </p>
+                </div>
+
+
+                <button
+                    id="healthRefreshButton"
+                    type="button"
+                    class="secondary-btn"
+                >
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+
+            <div class="health-grid">
+
+                <div class="health-card">
+
+                    <div class="health-icon">
+                        ☸️
+                    </div>
+
+                    <div>
+                        <div class="health-name">
+                            Kubernetes / GKE
+                        </div>
+
+                        <div
+                            id="kubernetesStatus"
+                            class="status checking"
+                        >
+                            Checking...
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="health-card">
+
+                    <div class="health-icon">
+                        🔥
+                    </div>
+
+                    <div>
+                        <div class="health-name">
+                            Prometheus
+                        </div>
+
+                        <div
+                            id="prometheusStatus"
+                            class="status checking"
+                        >
+                            Checking...
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="health-card">
+
+                    <div class="health-icon">
+                        📊
+                    </div>
+
+                    <div>
+                        <div class="health-name">
+                            Grafana
+                        </div>
+
+                        <div
+                            id="grafanaStatus"
+                            class="status checking"
+                        >
+                            Checking...
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="health-card">
+
+                    <div class="health-icon">
+                        🧠
+                    </div>
+
+                    <div>
+                        <div class="health-name">
+                            AI Engine
+                        </div>
+
+                        <div
+                            id="aiEngineStatus"
+                            class="status connected"
+                        >
+                            Ready
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick navigation -->
+
+            <div class="quick-grid">
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-go-section="monitoring"
+                >
+                    <span class="quick-card-icon">📈</span>
+
+                    <span>
+                        <strong>View Monitoring</strong>
+                        <small>
+                            Inspect pod health, restarts, CPU and memory.
+                        </small>
+                    </span>
+
+                    <span class="quick-arrow">→</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-go-section="investigate"
+                >
+                    <span class="quick-card-icon">🔍</span>
+
+                    <span>
+                        <strong>Investigate Incident</strong>
+                        <small>
+                            Collect evidence and identify likely root cause.
+                        </small>
+                    </span>
+
+                    <span class="quick-arrow">→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MONITORING
+        ================================================== -->
+
+        <section
+            id="section-monitoring"
+            class="page-section"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        REAL-TIME OBSERVABILITY
+                    </div>
+
+                    <h1>Monitoring</h1>
+
+                    <p>
+                        Kubernetes workload metrics and health indicators.
+                    </p>
+
+                </div>
+
+
+                <div class="page-actions">
+
+                    <button
+                        id="openGrafanaButton"
+                        type="button"
+                        class="secondary-btn"
+                    >
+                        📊 Open Grafana
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="monitor-toolbar">
+
+                <div>
+
+                    <label for="metricsNamespace">
+                        Namespace
+                    </label>
+
+                    <select id="metricsNamespace">
+                        <option value="ai-sre">
+                            ai-sre
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <button
+                    id="metricsRefreshButton"
+                    type="button"
+                    class="secondary-btn"
+                >
+                    🔄 Refresh Metrics
+                </button>
+
+            </div>
+
+
+            <div class="metrics-grid">
+
+                <div class="metric-card">
+                    <div class="metric-icon">🟢</div>
+
+                    <div>
+                        <div class="metric-name">
+                            Running Pods
+                        </div>
+
+                        <div
+                            id="runningPods"
+                            class="metric-value"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-icon">🔴</div>
+
+                    <div>
+                        <div class="metric-name">
+                            Failed Pods
+                        </div>
+
+                        <div
+                            id="failedPods"
+                            class="metric-value danger"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-icon">⚠️</div>
+
+                    <div>
+                        <div class="metric-name">
+                            Pods Not Ready
+                        </div>
+
+                        <div
+                            id="notReadyPods"
+                            class="metric-value warning"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-icon">🔄</div>
+
+                    <div>
+                        <div class="metric-name">
+                            Container Restarts
+                        </div>
+
+                        <div
+                            id="containerRestarts"
+                            class="metric-value"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-icon">💻</div>
+
+                    <div>
+                        <div class="metric-name">
+                            CPU Usage
+                        </div>
+
+                        <div
+                            id="cpuUsage"
+                            class="metric-value"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-icon">🧠</div>
+
+                    <div>
+                        <div class="metric-name">
+                            Memory Usage
+                        </div>
+
+                        <div
+                            id="memoryUsage"
+                            class="metric-value"
+                        >
+                            --
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             INVESTIGATE
+        ================================================== -->
+
+        <section
+            id="section-investigate"
+            class="page-section"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        INCIDENT INVESTIGATION
+                    </div>
+
+                    <h1>Investigate an Incident</h1>
+
+                    <p>
+                        Ask the AI SRE Agent about your Kubernetes workload.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="investigation-card">
+
+                <div class="form-group">
+
+                    <label for="question">
+                        What would you like to investigate?
+                    </label>
+
+                    <textarea
+                        id="question"
+                        placeholder="Example: Why is payment-api crashing?"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="namespace">
+                            Namespace
+                        </label>
+
+                        <select id="namespace">
+                            <option value="">
+                                Loading namespaces...
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="deployment">
+                            Deployment
+                        </label>
+
+                        <select id="deployment">
+
+                            <option value="">
+                                All deployments
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="investigateButton"
+                    type="button"
+                    class="primary-btn"
+                >
+                    🔍 Investigate with AI
+                </button>
+
+
+                <div class="quick-investigations">
+
+                    <span>
+                        Quick investigations:
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="quick-question"
+                        data-question="Why is payment-api crashing?"
+                    >
+                        Why is payment-api crashing?
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-question"
+                        data-question="Show unhealthy pods"
+                    >
+                        Show unhealthy pods
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-question"
+                        data-question="Check recent errors"
+                    >
+                        Check recent errors
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-question"
+                        data-question="Show containers with high restart counts"
+                    >
+                        High restarts
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULTS
+        ================================================== -->
+
+        <section
+            id="section-results"
+            class="page-section"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        AI-POWERED ANALYSIS
+                    </div>
+
+                    <h1>Investigation Results</h1>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="investigationResult"
+                class="result-container empty-result"
+            >
+                Run an investigation to view results.
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="/static/app.js?v=final2"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,15 @@
+.venv
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.log
+.DS_Store
+
+.kube
+.config/gcloud
+
+incident-app
+monitoring
+k8s

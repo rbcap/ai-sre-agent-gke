@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pending-demo
+  namespace: ai-sre
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pending-demo
+  template:
+    metadata:
+      labels:
+        app: pending-demo
+    spec:
+      containers:
+        - name: pending-demo
+          image: nginx:1.27
+          resources:
+            requests:
+              cpu: "100"
+              memory: "500Gi"

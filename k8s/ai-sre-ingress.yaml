@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ai-sre-ingress
+  namespace: ai-sre
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "ai-sre-static-ip"
+    networking.gke.io/managed-certificates: "ai-sre-cert"
+spec:
+  defaultBackend:
+    service:
+      name: ai-sre-agent
+      port:
+        number: 80

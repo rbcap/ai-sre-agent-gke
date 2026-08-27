@@ -1,0 +1,14 @@
+kubernetes
+fastapi
+uvicorn[standard]
+kubernetes
+google-genai
+google-auth
+google-cloud-logging
+google-cloud-monitoring
+pydantic
+jinja2
+markdown
+google-auth
+itsdangerous
+python-multipart

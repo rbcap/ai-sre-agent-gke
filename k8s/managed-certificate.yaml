@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: ai-sre-cert
+  namespace: ai-sre
+spec:
+  domains:
+    - rb.ai-sre.dynv6.net

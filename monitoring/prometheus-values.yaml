@@ -1,0 +1,87 @@
+grafana:
+  enabled: true
+
+  adminUser: admin
+  adminPassword: "ChangeME"
+
+  service:
+    type: LoadBalancer
+
+  persistence:
+    enabled: true
+    type: sts
+    storageClassName: standard-rwo
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+
+prometheus:
+  enabled: true
+
+  prometheusSpec:
+    retention: 15d
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard-rwo
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 30Gi
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        memory: 4Gi
+
+
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard-rwo
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+
+
+kubeStateMetrics:
+  enabled: true
+
+
+# Disable node-exporter on GKE Autopilot
+nodeExporter:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+
+# Disable GKE-managed control plane components
+kubeDns:
+  enabled: false
+
+coreDns:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeProxy:
+  enabled: false
